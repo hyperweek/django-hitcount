@@ -87,7 +87,11 @@ class HitCount(models.Model):
 
     class Meta:
         ordering = ( '-hits', )
-        #unique_together = (("content_type", "object_pk"),)
+        #unique_together won't work in MySql for a longtext -> object_pk
+        #1. comment unique_together, reinstall & run syncdb
+        #2. CREATE UNIQUE INDEX hitcount_index_content_object ON hitcount_hit_count (content_type_id, object_pk(255));
+        #3. uncomment unique_together, reinstall & run syncdb
+        unique_together = (("content_type", "object_pk"),)
         get_latest_by = "modified"
         db_table = "hitcount_hit_count"
         verbose_name = "Hit Count"
