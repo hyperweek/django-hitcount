@@ -76,22 +76,17 @@ class HitCount(models.Model):
 
     '''
     hits            = models.PositiveIntegerField(default=0)
-    popularity      = models.FloatField(default=0.0)
     created         = models.DateTimeField(default=datetime.datetime.utcnow)
     modified        = models.DateTimeField(default=datetime.datetime.utcnow)
     content_type    = models.ForeignKey(ContentType,
                         verbose_name="content type",
                         related_name="content_type_set_for_%(class)s",)
-    object_pk       = models.TextField('object ID')
+    object_pk       = models.PositiveIntegerField('object ID')
     content_object  = generic.GenericForeignKey('content_type', 'object_pk')
 
     class Meta:
         ordering = ( '-hits', )
-        #unique_together won't work in MySql for a longtext -> object_pk
-        #1. comment unique_together, reinstall & run syncdb
-        #2. CREATE UNIQUE INDEX hitcount_index_content_object ON hitcount_hit_count (content_type_id, object_pk(255));
-        #3. uncomment unique_together, reinstall & run syncdb
-        unique_together = (("content_type", "object_pk"),)
+        unique_together = ("content_type", "object_pk")
         get_latest_by = "modified"
         db_table = "hitcount_hit_count"
         verbose_name = "Hit Count"
