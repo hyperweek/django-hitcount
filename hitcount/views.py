@@ -17,6 +17,9 @@ def _update_hit_count(request, hitcount):
 
     Returns True if the request was considered a Hit; returns False if not.
     '''
+    if hitcount is None:
+        return False
+
     user = request.user
     session_key = request.session.session_key
     ip = get_ip(request)
