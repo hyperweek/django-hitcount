@@ -3,6 +3,7 @@ from django.contrib import admin
 from hitcount.models import Hit, HitCount, BlacklistIP, BlacklistUserAgent
 from hitcount import actions
 
+
 def created_format(obj):
     '''
     Format the created time for the admin. PS: I am not happy with this.
@@ -14,15 +15,16 @@ created_format.admin_order_field = 'created'
 
 
 class HitAdmin(admin.ModelAdmin):
-    list_display = (created_format,'user','ip','user_agent','hitcount')
-    search_fields = ('ip','user_agent')
+    list_display = (created_format, 'user', 'ip', 'user_agent', 'hitcount')
+    search_fields = ('ip', 'user_agent')
     date_hierarchy = 'created'
-    actions = [ actions.blacklist_ips,
-                actions.blacklist_user_agents,
-                actions.blacklist_delete_ips,
-                actions.blacklist_delete_user_agents,
-                actions.delete_queryset,
-                ]
+    actions = [
+        actions.blacklist_ips,
+        actions.blacklist_user_agents,
+        actions.blacklist_delete_ips,
+        actions.blacklist_delete_user_agents,
+        actions.delete_queryset,
+    ]
 
     def __init__(self, *args, **kwargs):
         super(HitAdmin, self).__init__(*args, **kwargs)
@@ -47,12 +49,14 @@ class HitAdmin(admin.ModelAdmin):
 #    fk_name = 'hitcount'
 #    extra = 0
 
+
 class HitCountAdmin(admin.ModelAdmin):
-    list_display = ('content_object','hits','modified')
+    list_display = ('content_object', 'hits', 'modified')
     fields = ('hits',)
 
     # TODO - when above is ready
     #inlines = [ HitInline, ]
+
 
 class BlacklistIPAdmin(admin.ModelAdmin):
     pass
@@ -60,8 +64,8 @@ class BlacklistIPAdmin(admin.ModelAdmin):
 
 class BlacklistUserAgentAdmin(admin.ModelAdmin):
     pass
- 
+
 admin.site.register(Hit, HitAdmin)
-admin.site.register(HitCount, HitCountAdmin) 
+admin.site.register(HitCount, HitCountAdmin)
 admin.site.register(BlacklistIP, BlacklistIPAdmin)
 admin.site.register(BlacklistUserAgent, BlacklistUserAgentAdmin)
