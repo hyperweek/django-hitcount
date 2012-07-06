@@ -112,8 +112,8 @@ class HitCount(models.Model):
             # is not fool proof - if someone sets their own `id` or `pk`
             # when initializing the HitCount object, we could get a duplicate.
             if HitCount.objects.filter(
-                    object_pk=self.object_pk).filter(
-                            content_type=self.content_type):
+                    object_pk=self.object_pk,
+                    content_type=self.content_type):
                 raise DuplicateContentObject("A HitCount object already " + \
                         "exists for this content_object.")
 

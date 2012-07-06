@@ -3,7 +3,7 @@ from django.template import TemplateSyntaxError
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 
-from hitcount.models import HitCount
+from hitcount.models import HitCount, DuplicateContentObject
 
 register = template.Library()
 
@@ -80,8 +80,14 @@ class GetHitCount(template.Node):
     def render(self, context):
         ctype, object_pk = get_target_ctype_pk(context, self.object_expr)
 
-        obj, created = HitCount.objects.get_or_create(content_type=ctype,
-                                            object_pk=object_pk)
+        try:
+            obj, created = HitCount.objects.get_or_create(
+                content_type=ctype,
+                object_pk=object_pk)
+        except DuplicateContentObject:
+            obj = HitCount.objects.get(
+                content_type=ctype,
+                object_pk=object_pk)
 
         if self.period:  # if user sets a time period, use it
             try:
@@ -145,8 +151,14 @@ class GetHitCountJavascript(template.Node):
     def render(self, context):
         ctype, object_pk = get_target_ctype_pk(context, self.object_expr)
 
-        obj, created = HitCount.objects.get_or_create(content_type=ctype,
-                        object_pk=object_pk)
+        try:
+            obj, created = HitCount.objects.get_or_create(
+                content_type=ctype,
+                object_pk=object_pk)
+        except DuplicateContentObject:
+            obj = HitCount.objects.get(
+                content_type=ctype,
+                object_pk=object_pk)
 
         js = "$.post( '" + reverse('hitcount_update_ajax') + "'," + \
             "\n\t{ hitcount_pk : '" + str(obj.pk) + "' },\n" + \
